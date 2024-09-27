@@ -40,8 +40,9 @@ public class MainActivity extends AppCompatActivity {
 
                 if (usernameText.equals("admin") && passwordText.equals("admin")) {
 
-                    // print
-                    System.out.println("Login successful");
+                    // redirect to home page
+                    Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+                    startActivity(intent);
 
                 } else {
                     Toast.makeText(MainActivity.this, "Invalid username or password", Toast.LENGTH_SHORT).show();
@@ -51,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
 
         // redirect to register page
         // android:id="@+id/signupText"
-        findViewById(R.id.signupText).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.registerText).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // redirect to register page
