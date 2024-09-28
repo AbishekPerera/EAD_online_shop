@@ -35,18 +35,18 @@ public class MainActivity extends AppCompatActivity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String usernameText = email.getText().toString();
-                String passwordText = password.getText().toString();
-
-                if (usernameText.equals("admin") && passwordText.equals("admin")) {
+//                String usernameText = email.getText().toString();
+//                String passwordText = password.getText().toString();
+//
+//                if (usernameText.equals("admin") && passwordText.equals("admin")) {
 
                     // redirect to home page
                     Intent intent = new Intent(MainActivity.this, HomeActivity.class);
                     startActivity(intent);
 
-                } else {
-                    Toast.makeText(MainActivity.this, "Invalid username or password", Toast.LENGTH_SHORT).show();
-                }
+//                } else {
+//                    Toast.makeText(MainActivity.this, "Invalid username or password", Toast.LENGTH_SHORT).show();
+//                }
             }
         });
 
