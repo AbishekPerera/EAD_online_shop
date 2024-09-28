@@ -31,8 +31,6 @@
             android:name=".HomeActivity"
             android:exported="false" />
 
-        <activity android:name=".OrdersActivity" android:exported="false"/>
-
     </application>
 
 </manifest>
