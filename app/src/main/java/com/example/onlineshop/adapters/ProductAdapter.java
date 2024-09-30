@@ -1,6 +1,7 @@
 package com.example.onlineshop.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.onlineshop.R;
+import com.example.onlineshop.ViewItemActivity;
 import com.example.onlineshop.models.ProductItem;
 
 import java.util.List;
@@ -40,6 +42,15 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         holder.productPrice.setText("$" + product.getPriceE());
         holder.productRating.setText(String.valueOf(product.getRating()));
         holder.productImage.setImageResource(product.getImageResId());
+
+        // Set onClickListener to open ViewItemActivity
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, ViewItemActivity.class);
+            intent.putExtra("productName", product.getName());
+            intent.putExtra("productDescription", "This is a description for " + product.getName());
+            intent.putExtra("productImage", product.getImageResId());
+            context.startActivity(intent);
+        });
     }
 
     @Override
