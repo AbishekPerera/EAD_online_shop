@@ -14,7 +14,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.onlineshop.adapters.BannerAdapter;
+import com.example.onlineshop.adapters.CategoryAdapter;
 import com.example.onlineshop.adapters.ProductAdapter;
+import com.example.onlineshop.models.CategoryItem;
 import com.example.onlineshop.models.ProductItem;
 
 import java.util.ArrayList;
@@ -25,6 +27,11 @@ public class HomeFragment extends Fragment {
     private RecyclerView recyclerView;
     private ProductAdapter productAdapter;
     private List<ProductItem> productList;
+
+    private RecyclerView categoryRecyclerView;
+    private CategoryAdapter categoryAdapter;
+    private List<CategoryItem> categoryList;
+
     private ViewPager2 bannerCarousel;
     private BannerAdapter bannerAdapter;
     private List<Integer> bannerImages;
@@ -47,8 +54,24 @@ public class HomeFragment extends Fragment {
         bannerAdapter = new BannerAdapter(getContext(), bannerImages);
         bannerCarousel.setAdapter(bannerAdapter);
 
+        // Initialize Categories RecyclerView
+        categoryRecyclerView = view.findViewById(R.id.categoriesRecyclerView);
+        LinearLayoutManager categoryLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        categoryRecyclerView.setLayoutManager(categoryLayoutManager);
+
+        // Sample Category List
+        categoryList = new ArrayList<>();
+        categoryList.add(new CategoryItem("Clothing", R.drawable.item_1));
+        categoryList.add(new CategoryItem("Electronics", R.drawable.item_2));
+        categoryList.add(new CategoryItem("Beauty", R.drawable.item_3));
+        categoryList.add(new CategoryItem("Home", R.drawable.item_4));
+
+        // Set up CategoryAdapter
+        categoryAdapter = new CategoryAdapter(getContext(), categoryList);
+        categoryRecyclerView.setAdapter(categoryAdapter);
+
+        // Initialize Products RecyclerView
         recyclerView = view.findViewById(R.id.productsRecyclerView);
-        // Set up the RecyclerView with GridLayoutManager (2 columns)
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2); // 2 columns
         recyclerView.setLayoutManager(gridLayoutManager);
 

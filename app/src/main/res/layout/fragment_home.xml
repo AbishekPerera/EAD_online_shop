@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".HomeActivity">
+    tools:context=".HomeFragment">
 
     <!-- Scrollable Area -->
     <androidx.core.widget.NestedScrollView
@@ -69,7 +69,6 @@
 
             </LinearLayout>
 
-            <!-- Banner -->
             <!-- Banner Carousel (ViewPager2) -->
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/bannerCarousel"
@@ -78,6 +77,27 @@
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="20dp" />
+
+            <!-- Categories Section -->
+            <TextView
+                android:id="@+id/categoriesSectionTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="16dp"
+                android:text="Categories"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <!-- Categories RecyclerView (Horizontal) -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/categoriesRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="20dp"
+                android:orientation="horizontal" />
 
             <!-- All Products Section -->
             <TextView
