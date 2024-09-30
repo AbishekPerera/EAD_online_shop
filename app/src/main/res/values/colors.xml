@@ -19,5 +19,10 @@
     <color name="blue_200">#FF64B5F6</color>
     <color name="blue_500">#FF2196F3</color>
     <color name="blue_700">#FF0d47a1</color>
+    <!-- gray -->
+    <color name="gray_200">#FFEEEEEE</color>
+    <color name="gray_500">#FF9E9E9E</color>
+    <color name="gray_700">#FF616161</color>
+    
     
 </resources>
