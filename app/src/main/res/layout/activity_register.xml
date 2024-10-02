@@ -44,7 +44,7 @@
                 android:background="@drawable/custom_edittext"
                 android:drawableStart="@drawable/baseline_person_24"
                 android:drawablePadding="8dp"
-                android:hint="Name"
+                android:hint="User Name"
                 android:padding="8dp"
                 android:textColor="@color/purple_200"
                 android:textColorHighlight="@color/cardview_dark_background" />
