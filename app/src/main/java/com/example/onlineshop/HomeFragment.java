@@ -1,9 +1,12 @@
 package com.example.onlineshop;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,9 +21,15 @@ import com.example.onlineshop.adapters.CategoryAdapter;
 import com.example.onlineshop.adapters.ProductAdapter;
 import com.example.onlineshop.models.CategoryItem;
 import com.example.onlineshop.models.ProductItem;
+import com.example.onlineshop.retrofit.ApiService;
+import com.example.onlineshop.retrofit.RetrofitClient;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class HomeFragment extends Fragment {
 
@@ -35,6 +44,8 @@ public class HomeFragment extends Fragment {
     private ViewPager2 bannerCarousel;
     private BannerAdapter bannerAdapter;
     private List<Integer> bannerImages;
+
+    private ApiService apiService;
 
     @Nullable
     @Override
@@ -54,21 +65,17 @@ public class HomeFragment extends Fragment {
         bannerAdapter = new BannerAdapter(getContext(), bannerImages);
         bannerCarousel.setAdapter(bannerAdapter);
 
+
         // Initialize Categories RecyclerView
         categoryRecyclerView = view.findViewById(R.id.categoriesRecyclerView);
         LinearLayoutManager categoryLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         categoryRecyclerView.setLayoutManager(categoryLayoutManager);
 
-        // Sample Category List
-        categoryList = new ArrayList<>();
-        categoryList.add(new CategoryItem("Clothing", R.drawable.item_1));
-        categoryList.add(new CategoryItem("Electronics", R.drawable.item_2));
-        categoryList.add(new CategoryItem("Beauty", R.drawable.item_3));
-        categoryList.add(new CategoryItem("Home", R.drawable.item_4));
+        // Initialize API service
+        apiService = RetrofitClient.getClient("http://10.0.2.2:5163/api/").create(ApiService.class);
 
-        // Set up CategoryAdapter
-        categoryAdapter = new CategoryAdapter(getContext(), categoryList);
-        categoryRecyclerView.setAdapter(categoryAdapter);
+        // Fetch categories
+        fetchCategories();
 
         // Initialize Products RecyclerView
         recyclerView = view.findViewById(R.id.productsRecyclerView);
@@ -86,5 +93,32 @@ public class HomeFragment extends Fragment {
         recyclerView.setAdapter(productAdapter);
 
         return view;
+    }
+
+    private void fetchCategories() {
+        // Get token from SharedPreferences
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+        String token = sharedPreferences.getString("token", "");
+
+        // Make API call to get categories
+        Call<List<CategoryItem>> call = apiService.getCategories("Bearer " + token);
+        call.enqueue(new Callback<List<CategoryItem>>() {
+            @Override
+            public void onResponse(Call<List<CategoryItem>> call, Response<List<CategoryItem>> response) {
+                if (response.isSuccessful()) {
+                    // Set the categories in RecyclerView
+                    categoryList = response.body();
+                    categoryAdapter = new CategoryAdapter(getContext(), categoryList);
+                    categoryRecyclerView.setAdapter(categoryAdapter);
+                } else {
+                    Toast.makeText(getContext(), "Failed to retrieve categories", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<CategoryItem>> call, Throwable t) {
+                Toast.makeText(getContext(), "API Call failed: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

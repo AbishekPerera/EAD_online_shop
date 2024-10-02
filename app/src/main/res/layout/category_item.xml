@@ -2,22 +2,18 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:layout_marginRight="10dp"
+    android:background="@drawable/rounded_corner_cards"
     android:orientation="vertical"
-    android:padding="8dp">
-
-    <ImageView
-        android:id="@+id/categoryImage"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:scaleType="centerCrop" />
+    android:padding="8dp"> <!-- Add rounded border background -->
 
     <TextView
         android:id="@+id/categoryName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Category"
         android:layout_gravity="center_horizontal"
+        android:padding="10dp"
+        android:text="Category"
         android:textSize="14sp"
-        android:textStyle="bold" />
-
+        android:textStyle="bold" /> <!-- Padding for better display -->
 </LinearLayout>
