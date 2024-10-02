@@ -1,38 +1,39 @@
 package com.example.onlineshop.models;
 
-public class ProductItem {
-    private String name;
-    private String category;
-    private double price;
-    private float rating;
-    private int imageResId;
+import java.util.List;
 
-    public ProductItem(String name, String category, double price, float rating, int imageResId) {
-        this.name = name;
-        this.category = category;
-        this.price = price;
-        this.rating = rating;
-        this.imageResId = imageResId;
+public class ProductItem {
+    private String id;
+    private String name;
+    private String description;
+    private String categoryId;
+    private double price;
+    private boolean isActive;
+    private int inventoryCount;
+    private int lowStockAlert;
+    private List<String> images;
+
+    public String getId() {
+        return id;
     }
 
-    // Getters
     public String getName() {
         return name;
     }
 
-    public String getCategory() {
-        return category;
+    public String getDescriptionE() {
+        return description;
+    }
+
+    public String getCategoryId() {
+        return categoryId;
     }
 
     public double getPriceE() {
         return price;
     }
 
-    public float getRating() {
-        return rating;
-    }
-
-    public int getImageResId() {
-        return imageResId;
+    public List<String> getImages() {
+        return images;
     }
 }

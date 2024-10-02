@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.onlineshop.R;
 import com.example.onlineshop.ViewItemActivity;
 import com.example.onlineshop.models.ProductItem;
@@ -38,17 +39,25 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     public void onBindViewHolder(@NonNull ProductViewHolder holder, int position) {
         ProductItem product = productList.get(position);
         holder.productName.setText(product.getName());
-        holder.productCategory.setText(product.getCategory());
+        holder.productCategory.setText(product.getCategoryId());
         holder.productPrice.setText("$" + product.getPriceE());
-        holder.productRating.setText(String.valueOf(product.getRating()));
-        holder.productImage.setImageResource(product.getImageResId());
+
+        // Load first image from the list of product images
+        if (product.getImages() != null && !product.getImages().isEmpty()) {
+            String imageUrl = product.getImages().get(0);
+            Glide.with(context)
+                    .load(imageUrl)
+                    .into(holder.productImage);
+        }
+
+        holder.productRating.setText("4.5"); // Static rating for now
 
         // Set onClickListener to open ViewItemActivity
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, ViewItemActivity.class);
             intent.putExtra("productName", product.getName());
-            intent.putExtra("productDescription", "This is a description for " + product.getName());
-            intent.putExtra("productImage", product.getImageResId());
+            intent.putExtra("productDescription", product.getDescriptionE());
+            intent.putExtra("productImage", product.getImages().get(0)); // Send first image
             context.startActivity(intent);
         });
     }

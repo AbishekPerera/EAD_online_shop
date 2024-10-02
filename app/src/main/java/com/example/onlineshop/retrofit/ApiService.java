@@ -1,6 +1,7 @@
 package com.example.onlineshop.retrofit;
 
 import com.example.onlineshop.models.CategoryItem;
+import com.example.onlineshop.models.ProductItem;
 import com.example.onlineshop.requests.LoginRequest;
 import com.example.onlineshop.requests.RegisterRequest;
 import com.example.onlineshop.responses.LoginResponse;
@@ -23,4 +24,7 @@ public interface ApiService {
 
     @GET("category")
     Call<List<CategoryItem>> getCategories(@Header("Authorization") String token);
+
+    @GET("product/all")
+    Call<List<ProductItem>> getProducts(@Header("Authorization") String token);
 }

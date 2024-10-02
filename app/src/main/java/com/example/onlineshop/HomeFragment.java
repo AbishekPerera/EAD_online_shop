@@ -82,15 +82,11 @@ public class HomeFragment extends Fragment {
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2); // 2 columns
         recyclerView.setLayoutManager(gridLayoutManager);
 
-        // Sample Product List
-        productList = new ArrayList<>();
-        productList.add(new ProductItem("Product 1", "Category 1", 100.0, 4.5f, R.drawable.item_1));
-        productList.add(new ProductItem("Product 2", "Category 2", 200.0, 4.0f, R.drawable.item_2));
-        productList.add(new ProductItem("Product 3", "Category 3", 300.0, 3.5f, R.drawable.item_3));
-        productList.add(new ProductItem("Product 4", "Category 4", 150.0, 4.8f, R.drawable.item_4));
+        // Initialize API service
+        apiService = RetrofitClient.getClient("http://10.0.2.2:5163/api/").create(ApiService.class);
 
-        productAdapter = new ProductAdapter(getContext(), productList);
-        recyclerView.setAdapter(productAdapter);
+        // Fetch products
+        fetchProducts();
 
         return view;
     }
@@ -117,6 +113,33 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onFailure(Call<List<CategoryItem>> call, Throwable t) {
+                Toast.makeText(getContext(), "API Call failed: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void fetchProducts() {
+        // Get token from SharedPreferences
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+        String token = sharedPreferences.getString("token", "");
+
+        // Make API call to get products
+        Call<List<ProductItem>> call = apiService.getProducts("Bearer " + token);
+        call.enqueue(new Callback<List<ProductItem>>() {
+            @Override
+            public void onResponse(Call<List<ProductItem>> call, Response<List<ProductItem>> response) {
+                if (response.isSuccessful()) {
+                    // Set the products in RecyclerView
+                    productList = response.body();
+                    productAdapter = new ProductAdapter(getContext(), productList);
+                    recyclerView.setAdapter(productAdapter);
+                } else {
+                    Toast.makeText(getContext(), "Failed to retrieve products", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<ProductItem>> call, Throwable t) {
                 Toast.makeText(getContext(), "API Call failed: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
