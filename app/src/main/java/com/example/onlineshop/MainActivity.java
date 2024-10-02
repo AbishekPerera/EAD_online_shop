@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -28,16 +29,17 @@ public class MainActivity extends AppCompatActivity {
     EditText email, password;
     Button loginButton;
     ApiService apiService;
+    TextView regitserBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         email = findViewById(R.id.email);
         password = findViewById(R.id.password);
         loginButton = findViewById(R.id.loginButton);
+        regitserBtn = findViewById(R.id.registerTextBtn);
 
         // Initialize Retrofit
         apiService = RetrofitClient.getClient("http://10.0.2.2:5163/api/").create(ApiService.class);
@@ -61,6 +63,17 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        regitserBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                // redirect to register activity
+                Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
+                startActivity(intent);
+
+            }
+        });
     }
 
     private void loginUser(String email, String password) {
@@ -77,8 +90,7 @@ public class MainActivity extends AppCompatActivity {
                     // Save token in SharedPreferences
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putString("token", token);
-                    editor.apply();  // or commit() to save synchronously
-
+                    editor.apply(); // or commit() to save synchronously
 
                     Toast.makeText(MainActivity.this, "Login successful!", Toast.LENGTH_SHORT).show();
 
