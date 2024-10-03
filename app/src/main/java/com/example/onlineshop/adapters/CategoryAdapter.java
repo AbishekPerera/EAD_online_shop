@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.onlineshop.R;
@@ -19,6 +20,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     private Context context;
     private List<CategoryItem> categoryList;
     private OnCategoryClickListener onCategoryClickListener;
+    private int selectedPosition = -1; // To track the selected category position
 
     public CategoryAdapter(Context context, List<CategoryItem> categoryList, OnCategoryClickListener listener) {
         this.context = context;
@@ -38,8 +40,17 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         CategoryItem categoryItem = categoryList.get(position);
         holder.categoryName.setText(categoryItem.getCategoryName());
 
+        // Change background color based on whether the item is selected or not
+        if (position == selectedPosition) {
+            holder.itemView.setBackgroundResource(R.drawable.selected_rounded_corner); // Set selected background
+        } else {
+            holder.itemView.setBackgroundResource(R.drawable.rounded_corner_cards); // Default background
+        }
+
         // Set click listener to handle category clicks
         holder.itemView.setOnClickListener(v -> {
+            selectedPosition = position; // Update selected position
+            notifyDataSetChanged(); // Notify adapter to refresh the background
             onCategoryClickListener.onCategoryClick(categoryItem.getId());
         });
     }
