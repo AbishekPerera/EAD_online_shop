@@ -34,4 +34,10 @@ public interface ApiService {
 
     @GET("product/category/{categoryId}")
     Call<List<ProductItem>> getProductsByCategory(@Header("Authorization") String authHeader, @Path("categoryId") String categoryId);
+
+    @GET("cart")
+    Call<Void> getUserCart(@Header("Authorization") String authToken);
+
+    @POST("cart")
+    Call<Void> createCart(@Header("Authorization") String authToken);
 }

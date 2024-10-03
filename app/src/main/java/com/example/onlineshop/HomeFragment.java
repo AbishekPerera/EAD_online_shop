@@ -79,6 +79,10 @@ public class HomeFragment extends Fragment implements CategoryAdapter.OnCategory
         // Initialize API service
         apiService = RetrofitClient.getClient("http://10.0.2.2:5163/api/").create(ApiService.class);
 
+
+        // Check if user has a cart
+        checkUserCart();
+
         // Fetch categories
         fetchCategories();
 
@@ -94,6 +98,58 @@ public class HomeFragment extends Fragment implements CategoryAdapter.OnCategory
         setupSearchView();
 
         return view;
+    }
+
+    private void checkUserCart() {
+        // Get token from SharedPreferences
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+        String token = sharedPreferences.getString("token", "");
+
+        // Check if user has a cart
+        Call<Void> call = apiService.getUserCart("Bearer " + token);
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (!response.isSuccessful()) {
+                    // If response is not 200, handle as if the cart does not exist
+                    if (response.code() == 404) {
+                        // Cart does not exist, create a new cart
+                        createUserCart();
+                    } else {
+                        Toast.makeText(getContext(), "Failed to check cart: " + response.message(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Toast.makeText(getContext(), "Failed to check cart: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void createUserCart() {
+        // Get token from SharedPreferences
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+        String token = sharedPreferences.getString("token", "");
+
+        // Create a new cart
+        Call<Void> call = apiService.createCart("Bearer " + token);
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(getContext(), "Cart created successfully", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "Failed to create cart", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Toast.makeText(getContext(), "Failed to create cart: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void fetchCategories() {
