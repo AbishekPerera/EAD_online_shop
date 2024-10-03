@@ -115,7 +115,8 @@ public class HomeFragment extends Fragment implements CategoryAdapter.OnCategory
                     if (response.code() == 404) {
                         // Cart does not exist, create a new cart
                         createUserCart();
-                    } else {
+                    }
+                    else {
                         Toast.makeText(getContext(), "Failed to check cart: " + response.message(), Toast.LENGTH_SHORT).show();
                     }
                 }

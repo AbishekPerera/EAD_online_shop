@@ -40,4 +40,8 @@ public interface ApiService {
 
     @POST("cart")
     Call<Void> createCart(@Header("Authorization") String authToken);
+
+    @POST("cart/addItem/{productId}")
+    Call<Void> addItemToCart(@Header("Authorization") String authToken, @Path("productId") String productId);
+
 }

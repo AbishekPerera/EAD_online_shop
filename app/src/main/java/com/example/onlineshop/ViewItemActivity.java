@@ -1,6 +1,8 @@
 package com.example.onlineshop;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -24,7 +26,8 @@ import retrofit2.Response;
 public class ViewItemActivity extends AppCompatActivity {
 
     private ImageView productImage, backButton;
-    private TextView productName, productDescription, productPrice, itemQuantity, increaseQuantity, decreaseQuantity, totalPrice;
+    private TextView productName, productDescription, productPrice, itemQuantity, increaseQuantity, decreaseQuantity,
+            totalPrice;
     private Button addToCartButton;
     private int quantity = 1;
     private ApiService apiService;
@@ -77,7 +80,7 @@ public class ViewItemActivity extends AppCompatActivity {
 
         // Handle Add to Cart button click
         addToCartButton.setOnClickListener(v -> {
-            // Handle adding the item to the cart here
+            addItemToCart(quantity, productId); // Add the selected quantity to the cart
         });
     }
 
@@ -126,4 +129,40 @@ public class ViewItemActivity extends AppCompatActivity {
         double total = pricePerItem * quantity;
         totalPrice.setText("Total: $" + total);
     }
+
+    // Add items to cart based on the selected quantity, handling sequential requests
+    private void addItemToCart(int quantity, String productId) {
+        SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+        String token = sharedPreferences.getString("token", "");
+
+        // Start adding items one by one
+        addItemToCartRecursive(token, productId, quantity, 0); // Start with 0 index
+    }
+
+    // Recursive method to handle the API calls one by one
+    private void addItemToCartRecursive(String token, String productId, int totalQuantity, int currentCount) {
+        if (currentCount < totalQuantity) {
+            Call<Void> call = apiService.addItemToCart("Bearer " + token, productId);
+            call.enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response) {
+                    if (response.isSuccessful()) {
+                        // Continue to the next iteration
+                        addItemToCartRecursive(token, productId, totalQuantity, currentCount + 1);
+                    } else {
+                        Toast.makeText(ViewItemActivity.this, "Failed to add item to cart", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Void> call, Throwable t) {
+                    Toast.makeText(ViewItemActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            // All items have been added
+            Toast.makeText(ViewItemActivity.this, "All items added to cart", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 }
