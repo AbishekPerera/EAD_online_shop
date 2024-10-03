@@ -40,7 +40,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         ProductItem product = productList.get(position);
         holder.productName.setText(product.getName());
         holder.productCategory.setText(product.getCategoryId());
-        holder.productPrice.setText("$" + product.getPriceE());
+        holder.productPrice.setText("$" + product.getPrice());
 
         // Load first image from the list of product images
         if (product.getImages() != null && !product.getImages().isEmpty()) {

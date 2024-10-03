@@ -6,12 +6,9 @@ public class ProductItem {
     private String id;
     private String name;
     private String description;
-    private String categoryId;
     private double price;
-    private boolean isActive;
-    private int inventoryCount;
-    private int lowStockAlert;
     private List<String> images;
+    private String categoryId;
 
     public String getId() {
         return id;
@@ -25,15 +22,19 @@ public class ProductItem {
         return description;
     }
 
-    public String getCategoryId() {
-        return categoryId;
-    }
-
-    public double getPriceE() {
+    public double getPrice() {
         return price;
     }
 
     public List<String> getImages() {
         return images;
+    }
+
+    public String getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(String categoryId) {
+        this.categoryId = categoryId;
     }
 }

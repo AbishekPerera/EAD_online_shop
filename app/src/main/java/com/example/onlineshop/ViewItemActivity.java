@@ -2,20 +2,32 @@ package com.example.onlineshop;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
+import com.example.onlineshop.models.ProductItem;
+import com.example.onlineshop.retrofit.ApiService;
+import com.example.onlineshop.retrofit.RetrofitClient;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class ViewItemActivity extends AppCompatActivity {
 
     private ImageView productImage, backButton;
-    private TextView productName, productDescription, itemQuantity, increaseQuantity, decreaseQuantity;
+    private TextView productName, productDescription, productPrice, itemQuantity, increaseQuantity, decreaseQuantity, totalPrice;
     private Button addToCartButton;
     private int quantity = 1;
+    private ApiService apiService;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -26,28 +38,29 @@ public class ViewItemActivity extends AppCompatActivity {
         productImage = findViewById(R.id.productImage);
         productName = findViewById(R.id.productName);
         productDescription = findViewById(R.id.productDescription);
+        productPrice = findViewById(R.id.productPrice);
+        totalPrice = findViewById(R.id.totalPrice);
         itemQuantity = findViewById(R.id.itemQuantity);
         increaseQuantity = findViewById(R.id.increaseQuantity);
         decreaseQuantity = findViewById(R.id.decreaseQuantity);
         addToCartButton = findViewById(R.id.addToCartButton);
         backButton = findViewById(R.id.backButton);
 
-        // Get the intent extras
+        // Initialize API service
+        apiService = RetrofitClient.getClient("http://10.0.2.2:5163/api/").create(ApiService.class);
+
+        // Get productId from intent
         Intent intent = getIntent();
         String productId = intent.getStringExtra("productId");
-        String name = intent.getStringExtra("productName");
-        String description = intent.getStringExtra("productDescription");
-        int imageResId = intent.getIntExtra("productImage", R.drawable.item_1);
 
-        // Set data to views
-        productImage.setImageResource(imageResId);
-        productName.setText(name);
-        productDescription.setText(description);
+        // Fetch product details from the API
+        fetchProductDetails(productId);
 
         // Handle quantity increase
         increaseQuantity.setOnClickListener(v -> {
             quantity++;
             itemQuantity.setText(String.valueOf(quantity));
+            updateTotalPrice();
         });
 
         // Handle quantity decrease
@@ -55,6 +68,7 @@ public class ViewItemActivity extends AppCompatActivity {
             if (quantity > 1) {
                 quantity--;
                 itemQuantity.setText(String.valueOf(quantity));
+                updateTotalPrice();
             }
         });
 
@@ -63,7 +77,53 @@ public class ViewItemActivity extends AppCompatActivity {
 
         // Handle Add to Cart button click
         addToCartButton.setOnClickListener(v -> {
-            // You can handle adding the item to the cart here
+            // Handle adding the item to the cart here
         });
+    }
+
+    // Fetch product details from the API
+    private void fetchProductDetails(String productId) {
+        Call<ProductItem> call = apiService.getProductDetails(productId);
+        call.enqueue(new Callback<ProductItem>() {
+            @Override
+            public void onResponse(Call<ProductItem> call, Response<ProductItem> response) {
+                if (response.isSuccessful()) {
+                    ProductItem product = response.body();
+                    if (product != null) {
+                        updateUIWithProductDetails(product);
+                    }
+                } else {
+                    Toast.makeText(ViewItemActivity.this, "Failed to load product details", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ProductItem> call, Throwable t) {
+                Toast.makeText(ViewItemActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.e("ViewItemActivity", "API error", t);
+            }
+        });
+    }
+
+    // Update the UI with the product details
+    private void updateUIWithProductDetails(ProductItem product) {
+        productName.setText(product.getName());
+        productDescription.setText(product.getDescriptionE());
+        productPrice.setText("Price: $" + product.getPrice());
+        totalPrice.setText("Total: $" + product.getPrice() * quantity);
+
+        // Load the first image
+        if (product.getImages() != null && !product.getImages().isEmpty()) {
+            Glide.with(this)
+                    .load(product.getImages().get(0))
+                    .into(productImage);
+        }
+    }
+
+    // Update the total price when quantity changes
+    private void updateTotalPrice() {
+        double pricePerItem = Double.parseDouble(productPrice.getText().toString().replace("Price: $", ""));
+        double total = pricePerItem * quantity;
+        totalPrice.setText("Total: $" + total);
     }
 }

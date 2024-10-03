@@ -14,6 +14,7 @@ import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 
 public interface ApiService {
     @POST("auth/login") // Change "login" to the actual login endpoint
@@ -27,4 +28,7 @@ public interface ApiService {
 
     @GET("product/all")
     Call<List<ProductItem>> getProducts(@Header("Authorization") String token);
+
+    @GET("product/{id}")
+    Call<ProductItem> getProductDetails(@Path("id") String productId);
 }
