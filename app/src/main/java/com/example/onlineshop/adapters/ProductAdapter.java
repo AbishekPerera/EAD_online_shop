@@ -55,6 +55,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         // Set onClickListener to open ViewItemActivity
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, ViewItemActivity.class);
+            intent.putExtra("productId", product.getId());
             intent.putExtra("productName", product.getName());
             intent.putExtra("productDescription", product.getDescriptionE());
             intent.putExtra("productImage", product.getImages().get(0)); // Send first image

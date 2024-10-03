@@ -34,6 +34,7 @@ public class ViewItemActivity extends AppCompatActivity {
 
         // Get the intent extras
         Intent intent = getIntent();
+        String productId = intent.getStringExtra("productId");
         String name = intent.getStringExtra("productName");
         String description = intent.getStringExtra("productDescription");
         int imageResId = intent.getIntExtra("productImage", R.drawable.item_1);

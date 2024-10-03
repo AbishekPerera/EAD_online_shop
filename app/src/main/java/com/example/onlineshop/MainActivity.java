@@ -50,6 +50,16 @@ public class MainActivity extends AppCompatActivity {
 
         sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
 
+        // Check if user is already logged in
+        String token = sharedPreferences.getString("token", null);
+        if (token != null) {
+            // User is logged in, redirect to HomeActivity
+            Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+            startActivity(intent);
+            finish(); // Close this activity so the user can't come back to it
+            return;
+        }
+
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
