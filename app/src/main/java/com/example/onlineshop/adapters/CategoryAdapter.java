@@ -4,7 +4,6 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -19,10 +18,12 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
 
     private Context context;
     private List<CategoryItem> categoryList;
+    private OnCategoryClickListener onCategoryClickListener;
 
-    public CategoryAdapter(Context context, List<CategoryItem> categoryList) {
+    public CategoryAdapter(Context context, List<CategoryItem> categoryList, OnCategoryClickListener listener) {
         this.context = context;
         this.categoryList = categoryList;
+        this.onCategoryClickListener = listener;
     }
 
     @NonNull
@@ -36,6 +37,11 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     public void onBindViewHolder(@NonNull CategoryViewHolder holder, int position) {
         CategoryItem categoryItem = categoryList.get(position);
         holder.categoryName.setText(categoryItem.getCategoryName());
+
+        // Set click listener to handle category clicks
+        holder.itemView.setOnClickListener(v -> {
+            onCategoryClickListener.onCategoryClick(categoryItem.getId());
+        });
     }
 
     @Override
@@ -44,12 +50,16 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     }
 
     public static class CategoryViewHolder extends RecyclerView.ViewHolder {
-
         TextView categoryName;
 
         public CategoryViewHolder(@NonNull View itemView) {
             super(itemView);
             categoryName = itemView.findViewById(R.id.categoryName);
         }
+    }
+
+    // Interface to handle clicks
+    public interface OnCategoryClickListener {
+        void onCategoryClick(String categoryId);
     }
 }

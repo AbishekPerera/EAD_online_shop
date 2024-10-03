@@ -3,6 +3,7 @@ package com.example.onlineshop;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,11 +32,12 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements CategoryAdapter.OnCategoryClickListener {
 
     private RecyclerView recyclerView;
     private ProductAdapter productAdapter;
-    private List<ProductItem> productList;
+    private List<ProductItem> productList;  // Original product list
+    private List<ProductItem> filteredProductList;  // Filtered list for search results
 
     private RecyclerView categoryRecyclerView;
     private CategoryAdapter categoryAdapter;
@@ -46,6 +48,7 @@ public class HomeFragment extends Fragment {
     private List<Integer> bannerImages;
 
     private ApiService apiService;
+    private androidx.appcompat.widget.SearchView searchView;  // SearchView for searching products
 
     @Nullable
     @Override
@@ -65,6 +68,8 @@ public class HomeFragment extends Fragment {
         bannerAdapter = new BannerAdapter(getContext(), bannerImages);
         bannerCarousel.setAdapter(bannerAdapter);
 
+        // Initialize SearchView
+        searchView = view.findViewById(R.id.searchBar);
 
         // Initialize Categories RecyclerView
         categoryRecyclerView = view.findViewById(R.id.categoriesRecyclerView);
@@ -82,11 +87,11 @@ public class HomeFragment extends Fragment {
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2); // 2 columns
         recyclerView.setLayoutManager(gridLayoutManager);
 
-        // Initialize API service
-        apiService = RetrofitClient.getClient("http://10.0.2.2:5163/api/").create(ApiService.class);
-
         // Fetch products
-        fetchProducts();
+        fetchProducts(null); // No category filter initially
+
+        // Set up SearchView
+        setupSearchView();
 
         return view;
     }
@@ -104,7 +109,7 @@ public class HomeFragment extends Fragment {
                 if (response.isSuccessful()) {
                     // Set the categories in RecyclerView
                     categoryList = response.body();
-                    categoryAdapter = new CategoryAdapter(getContext(), categoryList);
+                    categoryAdapter = new CategoryAdapter(getContext(), categoryList, HomeFragment.this);
                     categoryRecyclerView.setAdapter(categoryAdapter);
                 } else {
                     Toast.makeText(getContext(), "Failed to retrieve categories", Toast.LENGTH_SHORT).show();
@@ -118,20 +123,29 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private void fetchProducts() {
+    // Fetch products by category or all products
+    private void fetchProducts(@Nullable String categoryId) {
         // Get token from SharedPreferences
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
         String token = sharedPreferences.getString("token", "");
 
-        // Make API call to get products
-        Call<List<ProductItem>> call = apiService.getProducts("Bearer " + token);
+        Call<List<ProductItem>> call;
+        if (categoryId != null) {
+            // Make API call to get products by category
+            call = apiService.getProductsByCategory("Bearer " + token, categoryId);
+        } else {
+            // Make API call to get all products
+            call = apiService.getProducts("Bearer " + token);
+        }
+
         call.enqueue(new Callback<List<ProductItem>>() {
             @Override
             public void onResponse(Call<List<ProductItem>> call, Response<List<ProductItem>> response) {
                 if (response.isSuccessful()) {
                     // Set the products in RecyclerView
                     productList = response.body();
-                    productAdapter = new ProductAdapter(getContext(), productList);
+                    filteredProductList = new ArrayList<>(productList); // Initially, the filtered list is the same as the original list
+                    productAdapter = new ProductAdapter(getContext(), filteredProductList);
                     recyclerView.setAdapter(productAdapter);
                 } else {
                     Toast.makeText(getContext(), "Failed to retrieve products", Toast.LENGTH_SHORT).show();
@@ -143,5 +157,50 @@ public class HomeFragment extends Fragment {
                 Toast.makeText(getContext(), "API Call failed: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    @Override
+    public void onCategoryClick(String categoryId) {
+        // Fetch products based on selected category
+        fetchProducts(categoryId);
+    }
+
+    // Set up SearchView for filtering products by name
+    private void setupSearchView() {
+        searchView.setOnQueryTextListener(new androidx.appcompat.widget.SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                // Perform search when submit is pressed
+                filterProducts(query);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                // Perform search as text changes
+                filterProducts(newText);
+                return true;
+            }
+        });
+    }
+
+    // Filter products by name based on search query
+    private void filterProducts(String query) {
+        if (TextUtils.isEmpty(query)) {
+            // If search query is empty, show all products
+            filteredProductList = new ArrayList<>(productList);
+        } else {
+            // Filter the product list
+            List<ProductItem> filteredList = new ArrayList<>();
+            for (ProductItem product : productList) {
+                if (product.getName().toLowerCase().contains(query.toLowerCase())) {
+                    filteredList.add(product);
+                }
+            }
+            filteredProductList = filteredList;
+        }
+
+        // Update RecyclerView with filtered list
+        productAdapter.updateProductList(filteredProductList);
     }
 }

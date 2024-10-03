@@ -31,4 +31,7 @@ public interface ApiService {
 
     @GET("product/{id}")
     Call<ProductItem> getProductDetails(@Path("id") String productId);
+
+    @GET("product/category/{categoryId}")
+    Call<List<ProductItem>> getProductsByCategory(@Header("Authorization") String authHeader, @Path("categoryId") String categoryId);
 }
