@@ -7,6 +7,7 @@ import com.example.onlineshop.models.ProductItem;
 import com.example.onlineshop.requests.LoginRequest;
 import com.example.onlineshop.requests.RegisterRequest;
 import com.example.onlineshop.responses.LoginResponse;
+import com.example.onlineshop.responses.OrderResponse;
 import com.example.onlineshop.responses.RegisterResponse;
 
 import java.util.List;
@@ -61,6 +62,7 @@ public interface ApiService {
     @POST("order")
     Call<Void> placeOrder(@Header("Authorization") String authToken, @Body OrderRequest orderRequest);
 
-
+    @GET("order/userOrders")
+    Call<List<OrderResponse>> getUserOrders(@Header("Authorization") String authToken);
 
 }
