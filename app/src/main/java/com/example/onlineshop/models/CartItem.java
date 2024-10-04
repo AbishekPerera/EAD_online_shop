@@ -1,19 +1,29 @@
 package com.example.onlineshop.models;
 
+import java.util.List;
+
 public class CartItem {
+    private String productId;
     private String productName;
     private double productPrice;
     private int productQuantity;
-    private int productImageResId;
+    private int inventoryCount;
+    private List<String> images;
 
-    public CartItem(String productName, double productPrice, int productQuantity, int productImageResId) {
+    public CartItem(String productId, String productName, double productPrice, int productQuantity, int inventoryCount, List<String> images) {
+        this.productId = productId;
         this.productName = productName;
         this.productPrice = productPrice;
         this.productQuantity = productQuantity;
-        this.productImageResId = productImageResId;
+        this.inventoryCount = inventoryCount;
+        this.images = images;
     }
 
-    public String getProductName() {
+    public String getProductId() {
+        return productId;
+    }
+
+    public String getProductNameE() {
         return productName;
     }
 
@@ -25,7 +35,11 @@ public class CartItem {
         return productQuantity;
     }
 
-    public int getProductImageResId() {
-        return productImageResId;
+    public int getInventoryCount() {
+        return inventoryCount;
+    }
+
+    public List<String> getImagesE() {
+        return images;
     }
 }

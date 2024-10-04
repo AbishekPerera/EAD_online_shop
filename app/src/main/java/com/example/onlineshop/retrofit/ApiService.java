@@ -1,5 +1,6 @@
 package com.example.onlineshop.retrofit;
 
+import com.example.onlineshop.responses.CartResponse;
 import com.example.onlineshop.models.CategoryItem;
 import com.example.onlineshop.models.ProductItem;
 import com.example.onlineshop.requests.LoginRequest;
@@ -43,5 +44,19 @@ public interface ApiService {
 
     @POST("cart/addItem/{productId}")
     Call<Void> addItemToCart(@Header("Authorization") String authToken, @Path("productId") String productId);
+
+    // Add an item to the cart (increments the quantity)
+    @POST("cart/addItem/{productId}")
+    Call<CartResponse> addItemToCart2(@Header("Authorization") String authToken, @Path("productId") String productId);
+
+    // Remove an item from the cart (decrements the quantity)
+    @POST("cart/removeItem/{productId}")
+    Call<CartResponse> removeItemFromCart(@Header("Authorization") String authToken, @Path("productId") String productId);
+
+
+
+    @GET("cart")
+    Call<CartResponse> getCart(@Header("Authorization") String token);
+
 
 }
