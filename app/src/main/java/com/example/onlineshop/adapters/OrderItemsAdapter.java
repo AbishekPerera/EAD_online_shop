@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.onlineshop.R;
 import com.example.onlineshop.models.OrderItem;
 
@@ -41,8 +42,18 @@ public class OrderItemsAdapter extends RecyclerView.Adapter<OrderItemsAdapter.Or
         // Set the order item status
         holder.orderItemStatus.setText("Status: " + item.getStatus());
 
-        // Load item image
-        holder.orderItemImage.setImageResource(item.getImageResource());
+        // Load item image from the URL using Glide
+        if (item.getImages() != null && !item.getImages().isEmpty()) {
+            // Load the first image from the list
+            String imageUrl = item.getImages().get(0);
+            Glide.with(context)
+                    .load(imageUrl)
+                    .placeholder(R.drawable.default_item) // Optional placeholder
+                    .into(holder.orderItemImage);
+        } else {
+            // Use the default image if no image is available
+            holder.orderItemImage.setImageResource(R.drawable.default_item);
+        }
 
         // Set status color based on the item status
         if (item.getStatus().equalsIgnoreCase("Delivered")) {

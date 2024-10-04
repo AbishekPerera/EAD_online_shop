@@ -1,18 +1,20 @@
 package com.example.onlineshop.models;
 
+import java.util.List;
+
 public class OrderItem {
     private String itemName;
     private int quantity;
     private double price;
-    private int imageResource;
-    private String status; // Added status field
+    private List<String> images; // Store list of image URLs
+    private String status;
 
-    public OrderItem(String itemName, int quantity, double price, int imageResource, String status) {
+    public OrderItem(String itemName, int quantity, double price, List<String> images, String status) {
         this.itemName = itemName;
         this.quantity = quantity;
         this.price = price;
-        this.imageResource = imageResource;
-        this.status = status; // Initialize status
+        this.images = images; // Initialize with image URLs
+        this.status = status;
     }
 
     // Getters
@@ -28,11 +30,11 @@ public class OrderItem {
         return price;
     }
 
-    public int getImageResource() {
-        return imageResource;
+    public List<String> getImages() {
+        return images; // Return list of images
     }
 
     public String getStatus() {
-        return status; // Return the status of the item
+        return status;
     }
 }

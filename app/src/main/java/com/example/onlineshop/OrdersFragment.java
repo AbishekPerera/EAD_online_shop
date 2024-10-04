@@ -90,7 +90,7 @@ public class OrdersFragment extends Fragment {
                         itemResponse.getName(),
                         itemResponse.getQuantity(),
                         itemResponse.getPrice(),
-                        R.drawable.default_item, // Placeholder image
+                        itemResponse.getImages(), // Pass images from the response
                         itemResponse.getStatus()
                 );
                 orderItems.add(orderItem);
@@ -118,4 +118,5 @@ public class OrdersFragment extends Fragment {
         ongoingOrdersRecyclerView.setAdapter(ongoingOrdersAdapter);
         orderHistoryRecyclerView.setAdapter(orderHistoryAdapter);
     }
+
 }
