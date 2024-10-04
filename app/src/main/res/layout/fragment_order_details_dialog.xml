@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Title -->
+    <TextView
+        android:id="@+id/cartDialogTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Enter Delivery Details"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:paddingBottom="8dp" />
+
+    <!-- Subtitle -->
+    <TextView
+        android:id="@+id/cartDialogSubtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Please provide your phone number and delivery address."
+        android:textSize="14sp"
+        android:textColor="@color/gray_700"
+        android:paddingBottom="16dp" />
+
+    <!-- Phone Number Input -->
+    <EditText
+        android:id="@+id/cartPhoneNumberEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Phone Number"
+        android:inputType="phone"
+        android:backgroundTint="@color/gray_500"
+        android:padding="10dp"
+        android:textSize="16sp" />
+
+    <!-- Address Input -->
+    <EditText
+        android:id="@+id/cartAddressEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Delivery Address"
+        android:inputType="textPostalAddress"
+        android:backgroundTint="@color/gray_500"
+        android:padding="10dp"
+        android:textSize="16sp"
+        android:layout_marginTop="16dp" />
+
+    <!-- Submit Button -->
+    <Button
+        android:id="@+id/cartSubmitButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Place order"
+        android:textColor="@android:color/white"
+        android:backgroundTint="@color/purple_200"
+        android:layout_marginTop="16dp"
+        android:padding="12dp" />
+</LinearLayout>

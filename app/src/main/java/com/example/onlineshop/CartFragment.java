@@ -55,11 +55,12 @@ public class CartFragment extends Fragment implements CartAdapter.CartUpdateList
 
         // Set the onClickListener for the Place Order button
         placeOrderButton.setOnClickListener(v -> {
-            int totalItems = 0;
-            for (CartItem item : cartItemList) {
-                totalItems += item.getProductQuantity();
-            }
-            Toast.makeText(getContext(), "Order placed for " + totalItems + " items!", Toast.LENGTH_SHORT).show();
+            OrderDetailsDialogFragment dialogFragment = new OrderDetailsDialogFragment();
+            dialogFragment.setOrderListener(() -> {
+                // Refresh the cart after order is placed
+                fetchCartData();
+            });
+            dialogFragment.show(getParentFragmentManager(), "OrderDetailsDialog");
         });
 
         return view;
