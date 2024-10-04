@@ -6,13 +6,13 @@
     android:layout_height="match_parent"
     tools:context=".OrdersFragment">
 
-    <!-- Title remains fixed -->
+    <!-- Title -->
     <TextView
         android:id="@+id/orderTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Orders"
+        android:text="My Orders"
         android:textSize="24sp"
         android:textStyle="bold"
         android:gravity="center"

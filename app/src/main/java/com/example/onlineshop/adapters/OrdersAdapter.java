@@ -4,71 +4,82 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.onlineshop.R;
-import com.example.onlineshop.models.OrderItem;
+import com.example.onlineshop.models.Order;
 
 import java.util.List;
 
 public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewHolder> {
 
     private Context context;
-    private List<OrderItem> orderItemList;
+    private List<Order> orderList;
 
-    public OrdersAdapter(Context context, List<OrderItem> orderItemList) {
+    public OrdersAdapter(Context context, List<Order> orderList) {
         this.context = context;
-        this.orderItemList = orderItemList;
+        this.orderList = orderList;
     }
 
     @NonNull
     @Override
     public OrderViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_order, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.order_item, parent, false);
         return new OrderViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull OrderViewHolder holder, int position) {
-        OrderItem orderItem = orderItemList.get(position);
-        holder.productName.setText(orderItem.getProductName());
-        holder.orderDate.setText("Date: " + orderItem.getOrderDate());
-        holder.productQuantityPrice.setText("Qty: " + orderItem.getQuantity() + " | Price: $" + orderItem.getPrice());
-        holder.orderStatus.setText(orderItem.getOrderStatus());
+    public void onBindViewHolder(@NonNull final OrderViewHolder holder, int position) {
+        Order order = orderList.get(position);
 
-        // Set status color
-        if (orderItem.getOrderStatus().equalsIgnoreCase("Canceled")) {
-            holder.orderStatus.setTextColor(context.getResources().getColor(R.color.red_700));
-        } else if (orderItem.getOrderStatus().equalsIgnoreCase("Delivered")) {
-            holder.orderStatus.setTextColor(context.getResources().getColor(R.color.green_700));
-        } else {
-            holder.orderStatus.setTextColor(context.getResources().getColor(R.color.purple_500));
-        }
+        // Set basic order details
+        holder.orderPhone.setText("Phone: " + order.getPhoneNumber());
+        holder.orderAddress.setText("Address: " + order.getAddress());
+        holder.orderTotalPrice.setText("Total: " + order.getTotalPrice());
+        holder.orderStatus.setText(order.getStatus());
 
-        // Set product image (for now using a default image, but it can be updated dynamically)
-        holder.productImage.setImageResource(orderItem.getImageResource());
+        // Set RecyclerView for order items
+        OrderItemsAdapter itemsAdapter = new OrderItemsAdapter(context, order.getOrderItems());
+        holder.orderItemsRecyclerView.setLayoutManager(new LinearLayoutManager(context));
+        holder.orderItemsRecyclerView.setAdapter(itemsAdapter);
+
+        // Expand/Collapse order items
+        holder.expandOrderButton.setOnClickListener(v -> {
+            if (holder.orderItemsRecyclerView.getVisibility() == View.VISIBLE) {
+                holder.orderItemsRecyclerView.setVisibility(View.GONE);
+                holder.expandOrderButton.setImageResource(R.drawable.arrow_detail);
+            } else {
+                holder.orderItemsRecyclerView.setVisibility(View.VISIBLE);
+                holder.expandOrderButton.setImageResource(R.drawable.arrow_detail);
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
-        return orderItemList.size();
+        return orderList.size();
     }
 
-    public static class OrderViewHolder extends RecyclerView.ViewHolder {
-        TextView productName, orderDate, productQuantityPrice, orderStatus;
-        ImageView productImage;
+    static class OrderViewHolder extends RecyclerView.ViewHolder {
+
+        TextView orderPhone, orderAddress, orderTotalPrice, orderStatus;
+        ImageButton expandOrderButton;
+        RecyclerView orderItemsRecyclerView;
 
         public OrderViewHolder(@NonNull View itemView) {
             super(itemView);
-            productName = itemView.findViewById(R.id.productName);
-            orderDate = itemView.findViewById(R.id.orderDate);
-            productQuantityPrice = itemView.findViewById(R.id.productQuantityPrice);
+            orderPhone = itemView.findViewById(R.id.orderPhone);
+            orderAddress = itemView.findViewById(R.id.orderAddress);
+            orderTotalPrice = itemView.findViewById(R.id.orderTotalPrice);
             orderStatus = itemView.findViewById(R.id.orderStatus);
-            productImage = itemView.findViewById(R.id.productImage);
+            expandOrderButton = itemView.findViewById(R.id.expandOrderButton);
+            orderItemsRecyclerView = itemView.findViewById(R.id.orderItemsRecyclerView);
         }
     }
 }

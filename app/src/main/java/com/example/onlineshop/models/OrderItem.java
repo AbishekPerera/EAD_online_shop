@@ -1,30 +1,38 @@
 package com.example.onlineshop.models;
 
 public class OrderItem {
-    private String orderId;
-    private String orderDate;
-    private String orderStatus;
-    private String productName;
+    private String itemName;
     private int quantity;
     private double price;
     private int imageResource;
+    private String status; // Added status field
 
-    public OrderItem(String orderId, String orderDate, String orderStatus, String productName, int quantity, double price, int imageResource) {
-        this.orderId = orderId;
-        this.orderDate = orderDate;
-        this.orderStatus = orderStatus;
-        this.productName = productName;
+    public OrderItem(String itemName, int quantity, double price, int imageResource, String status) {
+        this.itemName = itemName;
         this.quantity = quantity;
         this.price = price;
         this.imageResource = imageResource;
+        this.status = status; // Initialize status
     }
 
     // Getters
-    public String getOrderId() { return orderId; }
-    public String getOrderDate() { return orderDate; }
-    public String getOrderStatus() { return orderStatus; }
-    public String getProductName() { return productName; }
-    public int getQuantity() { return quantity; }
-    public double getPrice() { return price; }
-    public int getImageResource() { return imageResource; }
+    public String getItemNameE() {
+        return itemName;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public double getPriceE() {
+        return price;
+    }
+
+    public int getImageResource() {
+        return imageResource;
+    }
+
+    public String getStatus() {
+        return status; // Return the status of the item
+    }
 }
