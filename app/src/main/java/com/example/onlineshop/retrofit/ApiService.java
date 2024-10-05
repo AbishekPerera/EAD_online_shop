@@ -19,6 +19,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
+import retrofit2.http.PUT;
 
 public interface ApiService {
     @POST("auth/login") // Change "login" to the actual login endpoint
@@ -68,6 +69,9 @@ public interface ApiService {
 
     @POST("order/cancelOrderRequest/{orderId}")
     Call<Void> cancelOrderRequest(@Header("Authorization") String authToken, @Path("orderId") String orderId, @Body HashMap<String, String> requestBody);
+
+    @PUT("user")
+    Call<Void> updateUserName(@Header("Authorization") String token, @Body HashMap<String, String> requestBody);
 
 
 }
