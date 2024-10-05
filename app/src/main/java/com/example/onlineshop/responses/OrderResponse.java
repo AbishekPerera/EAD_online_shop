@@ -8,8 +8,11 @@ public class OrderResponse {
     private String deliveryAddress;
     private double totalPrice;
     private String status;
+    private boolean isCancelRequested;
+    private String note;
     private List<OrderItemResponse> items;
 
+    // Getters for each field
     public String getId() {
         return id;
     }
@@ -30,10 +33,19 @@ public class OrderResponse {
         return status;
     }
 
+    public boolean isCancelRequested() {
+        return isCancelRequested;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
     public List<OrderItemResponse> getItems() {
         return items;
     }
 
+    // Inner class representing the response of each order item
     public static class OrderItemResponse {
         private String id;
         private String productId;
@@ -43,6 +55,7 @@ public class OrderResponse {
         private String status;
         private List<String> images;
 
+        // Getters for each field
         public String getId() {
             return id;
         }

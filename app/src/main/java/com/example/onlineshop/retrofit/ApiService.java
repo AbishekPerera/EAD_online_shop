@@ -10,6 +10,7 @@ import com.example.onlineshop.responses.LoginResponse;
 import com.example.onlineshop.responses.OrderResponse;
 import com.example.onlineshop.responses.RegisterResponse;
 
+import java.util.HashMap;
 import java.util.List;
 
 import retrofit2.Call;
@@ -64,5 +65,9 @@ public interface ApiService {
 
     @GET("order/userOrders")
     Call<List<OrderResponse>> getUserOrders(@Header("Authorization") String authToken);
+
+    @POST("order/cancelOrderRequest/{orderId}")
+    Call<Void> cancelOrderRequest(@Header("Authorization") String authToken, @Path("orderId") String orderId, @Body HashMap<String, String> requestBody);
+
 
 }

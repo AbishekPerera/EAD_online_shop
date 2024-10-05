@@ -97,11 +97,14 @@ public class OrdersFragment extends Fragment {
             }
 
             Order order = new Order(
+                    orderResponse.getId(),
                     orderResponse.getPhoneNumber(),
                     orderResponse.getDeliveryAddress(),
                     String.valueOf(orderResponse.getTotalPrice()),
                     orderResponse.getStatus(),
-                    orderItems
+                    orderItems,
+                    orderResponse.isCancelRequested(),
+                    orderResponse.getNote()
             );
 
             if (orderResponse.getStatus().equalsIgnoreCase("Processing") || orderResponse.getStatus().equalsIgnoreCase("Partially Delivered")) {
