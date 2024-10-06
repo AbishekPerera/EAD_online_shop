@@ -60,11 +60,16 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             holder.productImage.setImageResource(R.drawable.item_4); // Use a default image resource
         }
 
-        // Set static product rating for now (this will be dynamic later)
+        // Set product rating dynamically
         if (product.getVendor() != null && product.getVendor().getRatings() != null) {
-            holder.productRating.setText(String.valueOf(product.getVendor().getRatings().getAverage()));
+            float rating = product.getVendor().getRatings().getAverage();
+            holder.productRating.setText(String.valueOf(rating));
+
+            // Set colored stars based on rating
+            setProductRatingStars(holder, rating);
         } else {
             holder.productRating.setText("0/5");
+            setProductRatingStars(holder, 0); // No rating, show empty stars
         }
 
         // Set onClickListener to open ViewItemActivity
@@ -84,6 +89,47 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         });
     }
 
+    private void setProductRatingStars(ProductViewHolder holder, float rating) {
+        int fullStars = (int) rating; // Full stars based on the integer part of the rating
+        boolean hasHalfStar = rating - fullStars >= 0.5; // Check if there should be a half star
+        int emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0); // Calculate remaining empty stars
+
+        // Reset star views to default (empty)
+        holder.star1.setImageResource(android.R.drawable.btn_star_big_off);
+        holder.star2.setImageResource(android.R.drawable.btn_star_big_off);
+        holder.star3.setImageResource(android.R.drawable.btn_star_big_off);
+        holder.star4.setImageResource(android.R.drawable.btn_star_big_off);
+        holder.star5.setImageResource(android.R.drawable.btn_star_big_off);
+
+        // Fill stars based on the rating
+        if (fullStars >= 1) holder.star1.setImageResource(android.R.drawable.btn_star_big_on);
+        if (fullStars >= 2) holder.star2.setImageResource(android.R.drawable.btn_star_big_on);
+        if (fullStars >= 3) holder.star3.setImageResource(android.R.drawable.btn_star_big_on);
+        if (fullStars >= 4) holder.star4.setImageResource(android.R.drawable.btn_star_big_on);
+        if (fullStars == 5) holder.star5.setImageResource(android.R.drawable.btn_star_big_on);
+
+        // Set a half star if applicable
+        if (hasHalfStar && fullStars < 5) {
+            switch (fullStars + 1) {
+                case 1:
+                    holder.star1.setImageResource(R.drawable.btn_star_big_half);
+                    break;
+                case 2:
+                    holder.star2.setImageResource(R.drawable.btn_star_big_half);
+                    break;
+                case 3:
+                    holder.star3.setImageResource(R.drawable.btn_star_big_half);
+                    break;
+                case 4:
+                    holder.star4.setImageResource(R.drawable.btn_star_big_half);
+                    break;
+                case 5:
+                    holder.star5.setImageResource(R.drawable.btn_star_big_half);
+                    break;
+            }
+        }
+    }
+
     @Override
     public int getItemCount() {
         return productList.size();
@@ -98,6 +144,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     public static class ProductViewHolder extends RecyclerView.ViewHolder {
         ImageView productImage;
         TextView productName, productCategory, productPrice, productRating;
+        ImageView star1, star2, star3, star4, star5; // Star views
 
         public ProductViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -106,6 +153,13 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             productCategory = itemView.findViewById(R.id.product_category);
             productPrice = itemView.findViewById(R.id.product_price);
             productRating = itemView.findViewById(R.id.product_rating);
+
+            // Initialize star ImageViews
+            star1 = itemView.findViewById(R.id.star1);
+            star2 = itemView.findViewById(R.id.star2);
+            star3 = itemView.findViewById(R.id.star3);
+            star4 = itemView.findViewById(R.id.star4);
+            star5 = itemView.findViewById(R.id.star5);
         }
     }
 }
