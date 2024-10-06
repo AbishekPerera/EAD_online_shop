@@ -80,5 +80,7 @@ public interface ApiService {
     @POST("user/deactivate/{userId}")
     Call<Void> deactivateAccount(@Header("Authorization") String token, @Path("userId") String userId);
 
+    @POST("vendor/{vendorId}/rating")
+    Call<Void> submitRating(@Header("Authorization") String authToken, @Path("vendorId") String vendorId, @Body HashMap<String, Object> requestBody);
 
 }

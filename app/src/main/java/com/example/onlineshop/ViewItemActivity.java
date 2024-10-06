@@ -7,12 +7,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
@@ -20,6 +22,7 @@ import com.example.onlineshop.models.ProductItem;
 import com.example.onlineshop.retrofit.ApiService;
 import com.example.onlineshop.retrofit.RetrofitClient;
 
+import java.util.HashMap;
 import java.util.List;
 
 import retrofit2.Call;
@@ -28,13 +31,14 @@ import retrofit2.Response;
 
 public class ViewItemActivity extends AppCompatActivity {
 
-    private ImageView productImage, backButton;
+    private ImageView productImage, backButton, addRating;
     private TextView productName, productDescription, productPrice, itemQuantity, increaseQuantity, decreaseQuantity,
             totalPrice, vendorNameViewProduct, vendorRatingViewProduct;
     private Button addToCartButton;
     private LinearLayout reviewSectionViewProduct;
     private int quantity = 1;
     private ApiService apiService;
+    private String vendorId;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -52,6 +56,7 @@ public class ViewItemActivity extends AppCompatActivity {
         decreaseQuantity = findViewById(R.id.decreaseQuantity);
         addToCartButton = findViewById(R.id.addToCartButton);
         backButton = findViewById(R.id.backButton);
+        addRating = findViewById(R.id.addRating); // Add Rating button
         vendorNameViewProduct = findViewById(R.id.vendorNameViewProduct);
         vendorRatingViewProduct = findViewById(R.id.vendorRatingViewProduct);
         reviewSectionViewProduct = findViewById(R.id.reviewSectionViewProduct);
@@ -88,6 +93,9 @@ public class ViewItemActivity extends AppCompatActivity {
         addToCartButton.setOnClickListener(v -> {
             addItemToCart(quantity, productId); // Add the selected quantity to the cart
         });
+
+        // Handle addRating button click to open rating dialog
+        addRating.setOnClickListener(v -> openRatingDialog());
     }
 
     // Fetch product details from the API
@@ -116,6 +124,7 @@ public class ViewItemActivity extends AppCompatActivity {
 
     // Update the UI with the product details
     private void updateUIWithProductDetails(ProductItem product) {
+        vendorId = product.getVendor().getId(); // Save vendorId for future use
         productName.setText(product.getName());
         productDescription.setText(product.getDescription());
         productPrice.setText("Price: $" + product.getPrice());
@@ -140,10 +149,8 @@ public class ViewItemActivity extends AppCompatActivity {
     }
 
     // Display user comments in the review section
-    // Display user comments in the review section
     private void displayUserComments(List<ProductItem.Vendor.Comment> comments) {
-        // Clear previous reviews
-        reviewSectionViewProduct.removeAllViews();
+        reviewSectionViewProduct.removeAllViews(); // Clear previous reviews
 
         // Get logged-in user's ID and username from SharedPreferences
         SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
@@ -178,6 +185,97 @@ public class ViewItemActivity extends AppCompatActivity {
         }
     }
 
+    // Open a dialog for rating and comment submission
+    private void openRatingDialog() {
+        // Create a dialog for rating
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_rating, null);
+        builder.setView(dialogView);
+
+        // Initialize the stars (1 to 5) and the comment input
+        ImageView star1 = dialogView.findViewById(R.id.star1);
+        ImageView star2 = dialogView.findViewById(R.id.star2);
+        ImageView star3 = dialogView.findViewById(R.id.star3);
+        ImageView star4 = dialogView.findViewById(R.id.star4);
+        ImageView star5 = dialogView.findViewById(R.id.star5);
+        EditText commentInput = dialogView.findViewById(R.id.commentInput);
+        Button submitButton = dialogView.findViewById(R.id.submitRatingButton);
+
+        // Array of stars for easy access
+        ImageView[] stars = { star1, star2, star3, star4, star5 };
+        final int[] rating = { 0 }; // Rating value, updated as the user clicks stars
+
+        // Star click listeners
+        for (int i = 0; i < stars.length; i++) {
+            final int starIndex = i + 1; // Star rating is 1-based
+            stars[i].setOnClickListener(v -> {
+                rating[0] = starIndex; // Update rating
+                updateStarSelection(starIndex, stars); // Update UI
+            });
+        }
+
+        // Show the dialog
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+        // Handle the submit button click
+        submitButton.setOnClickListener(v -> {
+            String comment = commentInput.getText().toString().trim();
+            if (rating[0] == 0 || comment.isEmpty()) {
+                Toast.makeText(this, "Please provide a rating and comment.", Toast.LENGTH_SHORT).show();
+            } else {
+                // Submit rating and comment via API
+                submitRating(rating[0], comment);
+                dialog.dismiss();
+            }
+        });
+    }
+
+    // Helper method to update star selection UI
+    private void updateStarSelection(int selectedStar, ImageView[] stars) {
+        for (int i = 0; i < stars.length; i++) {
+            if (i < selectedStar) {
+                stars[i].setImageResource(android.R.drawable.btn_star_big_on); // Selected star
+            } else {
+                stars[i].setImageResource(android.R.drawable.btn_star_big_off); // Unselected star
+            }
+        }
+    }
+
+    // Submit rating and comment to the API
+    private void submitRating(int rating, String comment) {
+        // Get token from SharedPreferences
+        SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+        String token = sharedPreferences.getString("token", "");
+
+        // Get vendorId (you may already have this, adjust accordingly)
+        String vendorId = this.vendorId;
+
+        // Create a request body for the API
+        HashMap<String, Object> requestBody = new HashMap<>();
+        requestBody.put("rating", rating);
+        requestBody.put("comment", comment);
+
+        // Make the API call
+        Call<Void> call = apiService.submitRating("Bearer " + token, vendorId, requestBody);
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(ViewItemActivity.this, "Rating submitted successfully!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(ViewItemActivity.this, "Failed to submit rating: " + response.message(),
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Toast.makeText(ViewItemActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
     // Update the total price when quantity changes
     private void updateTotalPrice() {
@@ -186,7 +284,8 @@ public class ViewItemActivity extends AppCompatActivity {
         totalPrice.setText("Total: $" + total);
     }
 
-    // Add items to cart based on the selected quantity, handling sequential requests
+    // Add items to cart based on the selected quantity, handling sequential
+    // requests
     private void addItemToCart(int quantity, String productId) {
         SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
         String token = sharedPreferences.getString("token", "");

@@ -290,7 +290,7 @@
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/vendorRatingViewProductCard"></LinearLayout>
+            app:layout_constraintTop_toBottomOf="@id/vendorRatingViewProductCard" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>
