@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="10dp"
+    android:layout_marginVertical="5dp"
+    android:background="@drawable/rounded_corner_cards2"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <!-- Commenter Name -->
+    <TextView
+        android:id="@+id/commenterName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Anonymous"
+        android:textColor="@android:color/black"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+    <!-- Comment Text -->
+    <TextView
+        android:id="@+id/commentText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="This is a user comment"
+        android:textSize="14sp" />
+
+    <!-- Comment Date -->
+    <TextView
+        android:id="@+id/commentDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:text="2024-10-06"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="12sp" />
+
+</LinearLayout>

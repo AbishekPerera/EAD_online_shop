@@ -1,13 +1,14 @@
 package com.example.onlineshop;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,6 +20,8 @@ import com.example.onlineshop.models.ProductItem;
 import com.example.onlineshop.retrofit.ApiService;
 import com.example.onlineshop.retrofit.RetrofitClient;
 
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -27,8 +30,9 @@ public class ViewItemActivity extends AppCompatActivity {
 
     private ImageView productImage, backButton;
     private TextView productName, productDescription, productPrice, itemQuantity, increaseQuantity, decreaseQuantity,
-            totalPrice;
+            totalPrice, vendorNameViewProduct, vendorRatingViewProduct;
     private Button addToCartButton;
+    private LinearLayout reviewSectionViewProduct;
     private int quantity = 1;
     private ApiService apiService;
 
@@ -48,13 +52,15 @@ public class ViewItemActivity extends AppCompatActivity {
         decreaseQuantity = findViewById(R.id.decreaseQuantity);
         addToCartButton = findViewById(R.id.addToCartButton);
         backButton = findViewById(R.id.backButton);
+        vendorNameViewProduct = findViewById(R.id.vendorNameViewProduct);
+        vendorRatingViewProduct = findViewById(R.id.vendorRatingViewProduct);
+        reviewSectionViewProduct = findViewById(R.id.reviewSectionViewProduct);
 
         // Initialize API service
         apiService = RetrofitClient.getClient("http://10.0.2.2:5163/api/").create(ApiService.class);
 
         // Get productId from intent
-        Intent intent = getIntent();
-        String productId = intent.getStringExtra("productId");
+        String productId = getIntent().getStringExtra("productId");
 
         // Fetch product details from the API
         fetchProductDetails(productId);
@@ -121,6 +127,39 @@ public class ViewItemActivity extends AppCompatActivity {
                     .load(product.getImages().get(0))
                     .into(productImage);
         }
+
+        // Update vendor info
+        if (product.getVendor() != null) {
+            vendorNameViewProduct.setText("Vendor: " + product.getVendor().getName());
+            vendorRatingViewProduct.setText("Average Rating: " + product.getVendor().getRatings().getAverage() + "/5");
+
+            // Display user comments
+            List<ProductItem.Vendor.Comment> comments = product.getVendor().getComments();
+            displayUserComments(comments);
+        }
+    }
+
+    // Display user comments in the review section
+    private void displayUserComments(List<ProductItem.Vendor.Comment> comments) {
+        reviewSectionViewProduct.removeAllViews();  // Clear previous reviews
+
+        LayoutInflater inflater = LayoutInflater.from(this);
+        for (ProductItem.Vendor.Comment comment : comments) {
+            // Inflate a new view for each comment
+            View reviewView = inflater.inflate(R.layout.item_review, reviewSectionViewProduct, false);
+
+            TextView commentText = reviewView.findViewById(R.id.commentText);
+            TextView commentDate = reviewView.findViewById(R.id.commentDate);
+            TextView commenterName = reviewView.findViewById(R.id.commenterName);
+
+            // Set the comment, commenter's name (anonymous), and date
+            commentText.setText(comment.getComment());
+            commentDate.setText(comment.getCreatedAt().toString());
+            commenterName.setText("Anonymous");
+
+            // Add the review view to the review section
+            reviewSectionViewProduct.addView(reviewView);
+        }
     }
 
     // Update the total price when quantity changes
@@ -164,5 +203,4 @@ public class ViewItemActivity extends AppCompatActivity {
             Toast.makeText(ViewItemActivity.this, "All items added to cart", Toast.LENGTH_SHORT).show();
         }
     }
-
 }
