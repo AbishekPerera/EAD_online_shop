@@ -38,7 +38,9 @@ public class ViewItemActivity extends AppCompatActivity {
     private LinearLayout reviewSectionViewProduct;
     private int quantity = 1;
     private ApiService apiService;
-    private String vendorId;
+    private String vendorId, productId;
+    private boolean userHasReviewed = false; // To track if the user has already reviewed
+    private String existingCommentId = null; // To store existing comment ID for updating
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -124,6 +126,7 @@ public class ViewItemActivity extends AppCompatActivity {
 
     // Update the UI with the product details
     private void updateUIWithProductDetails(ProductItem product) {
+        productId = product.getId();
         vendorId = product.getVendor().getId(); // Save vendorId for future use
         productName.setText(product.getName());
         productDescription.setText(product.getDescription());
@@ -175,6 +178,8 @@ public class ViewItemActivity extends AppCompatActivity {
             if (comment.getCustomerId().equals(loggedUserId)) {
                 // Show "userName (by You)" if the logged-in user made the comment
                 commenterName.setText(loggedUserName + " (by You)");
+                userHasReviewed = true; // User has already reviewed
+                existingCommentId = comment.getCustomerId(); // Store the comment ID for updating
             } else {
                 // Show "Anonymous" if it's a comment from another user
                 commenterName.setText("Anonymous");
@@ -225,8 +230,14 @@ public class ViewItemActivity extends AppCompatActivity {
             if (rating[0] == 0 || comment.isEmpty()) {
                 Toast.makeText(this, "Please provide a rating and comment.", Toast.LENGTH_SHORT).show();
             } else {
-                // Submit rating and comment via API
-                submitRating(rating[0], comment);
+                // Check if the user has already reviewed
+                if (userHasReviewed) {
+                    // Update existing comment
+                    updateComment(comment);
+                } else {
+                    // Submit new rating and comment
+                    submitRating(rating[0], comment);
+                }
                 dialog.dismiss();
             }
         });
@@ -243,14 +254,11 @@ public class ViewItemActivity extends AppCompatActivity {
         }
     }
 
-    // Submit rating and comment to the API
+    // Submit new rating and comment to the API
     private void submitRating(int rating, String comment) {
         // Get token from SharedPreferences
         SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
         String token = sharedPreferences.getString("token", "");
-
-        // Get vendorId (you may already have this, adjust accordingly)
-        String vendorId = this.vendorId;
 
         // Create a request body for the API
         HashMap<String, Object> requestBody = new HashMap<>();
@@ -264,8 +272,40 @@ public class ViewItemActivity extends AppCompatActivity {
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
                     Toast.makeText(ViewItemActivity.this, "Rating submitted successfully!", Toast.LENGTH_SHORT).show();
+                    fetchProductDetails(productId); // Refresh UI after rating
                 } else {
                     Toast.makeText(ViewItemActivity.this, "Failed to submit rating: " + response.message(),
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Toast.makeText(ViewItemActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    // Update existing comment
+    private void updateComment(String comment) {
+        // Get token from SharedPreferences
+        SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+        String token = sharedPreferences.getString("token", "");
+
+        // Create a request body for updating comment
+        HashMap<String, String> requestBody = new HashMap<>();
+        requestBody.put("comment", comment);
+
+        // Call API to update the comment
+        Call<Void> call = apiService.updateComment("Bearer " + token, vendorId, requestBody);
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(ViewItemActivity.this, "Comment updated successfully!", Toast.LENGTH_SHORT).show();
+                    fetchProductDetails(productId); // Refresh UI after updating comment
+                } else {
+                    Toast.makeText(ViewItemActivity.this, "Failed to update comment: " + response.message(),
                             Toast.LENGTH_SHORT).show();
                 }
             }
@@ -284,8 +324,7 @@ public class ViewItemActivity extends AppCompatActivity {
         totalPrice.setText("Total: $" + total);
     }
 
-    // Add items to cart based on the selected quantity, handling sequential
-    // requests
+    // Add items to cart based on the selected quantity, handling sequential requests
     private void addItemToCart(int quantity, String productId) {
         SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
         String token = sharedPreferences.getString("token", "");

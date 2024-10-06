@@ -83,4 +83,6 @@ public interface ApiService {
     @POST("vendor/{vendorId}/rating")
     Call<Void> submitRating(@Header("Authorization") String authToken, @Path("vendorId") String vendorId, @Body HashMap<String, Object> requestBody);
 
+    @PUT("vendor/{vendorId}/comment")
+    Call<Void> updateComment(@Header("Authorization") String token, @Path("vendorId") String vendorId, @Body HashMap<String, String> requestBody);
 }
