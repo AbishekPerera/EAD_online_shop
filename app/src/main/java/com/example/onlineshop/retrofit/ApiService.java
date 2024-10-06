@@ -77,5 +77,8 @@ public interface ApiService {
     @GET("user/currentUser")
     Call<UserResponse> getCurrentUser(@Header("Authorization") String token);
 
+    @POST("user/deactivate/{userId}")
+    Call<Void> deactivateAccount(@Header("Authorization") String token, @Path("userId") String userId);
+
 
 }
