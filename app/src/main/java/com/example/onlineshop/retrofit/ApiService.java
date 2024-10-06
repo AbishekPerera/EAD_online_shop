@@ -9,6 +9,7 @@ import com.example.onlineshop.requests.RegisterRequest;
 import com.example.onlineshop.responses.LoginResponse;
 import com.example.onlineshop.responses.OrderResponse;
 import com.example.onlineshop.responses.RegisterResponse;
+import com.example.onlineshop.responses.UserResponse;
 
 import java.util.HashMap;
 import java.util.List;
@@ -72,6 +73,9 @@ public interface ApiService {
 
     @PUT("user")
     Call<Void> updateUserName(@Header("Authorization") String token, @Body HashMap<String, String> requestBody);
+
+    @GET("user/currentUser")
+    Call<UserResponse> getCurrentUser(@Header("Authorization") String token);
 
 
 }
