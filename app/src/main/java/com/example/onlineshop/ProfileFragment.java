@@ -20,6 +20,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.onlineshop.retrofit.ApiService;
 import com.example.onlineshop.retrofit.RetrofitClient;
+import com.example.onlineshop.responses.UserResponse;
 
 import java.util.HashMap;
 
@@ -41,14 +42,19 @@ public class ProfileFragment extends Fragment {
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
         token = sharedPreferences.getString("token", "");
 
-        // Initialize Update Name section
+        // Initialize views
+        TextView userNameTextView = view.findViewById(R.id.userName);
+        TextView emailTextView = view.findViewById(R.id.userEmail);
         updateNameSection = view.findViewById(R.id.updateNameSection);
+
+        // Fetch and update user details whenever the profile fragment is opened
+        fetchAndStoreUserDetails(userNameTextView, emailTextView);
 
         // Set an onClickListener for the Update Name section
         updateNameSection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showUpdateNameDialog();
+                showUpdateNameDialog(userNameTextView);
             }
         });
 
@@ -73,7 +79,7 @@ public class ProfileFragment extends Fragment {
         return view;
     }
 
-    private void showUpdateNameDialog() {
+    private void showUpdateNameDialog(TextView userNameTextView) {
         // Create an AlertDialog
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         LayoutInflater inflater = getLayoutInflater();
@@ -103,7 +109,7 @@ public class ProfileFragment extends Fragment {
             public void onClick(View v) {
                 String newName = editTextNewName.getText().toString().trim();
                 if (!newName.isEmpty()) {
-                    updateUserName(newName);
+                    updateUserName(newName, userNameTextView);
                     dialog.dismiss();
                 } else {
                     Toast.makeText(getContext(), "Please enter a valid name", Toast.LENGTH_SHORT).show();
@@ -112,7 +118,7 @@ public class ProfileFragment extends Fragment {
         });
     }
 
-    private void updateUserName(String newName) {
+    private void updateUserName(String newName, TextView userNameTextView) {
         // Make the API call to update the user name
         ApiService apiService = RetrofitClient.getClient("http://10.0.2.2:5163/api/").create(ApiService.class);
 
@@ -127,9 +133,13 @@ public class ProfileFragment extends Fragment {
                 if (response.isSuccessful()) {
                     // Update the displayed name in the profile
                     Toast.makeText(getContext(), "Name updated successfully", Toast.LENGTH_SHORT).show();
-                    // Optionally, update the TextView displaying the user's name in the profile
-                     TextView userName = getView().findViewById(R.id.userName);
-                     userName.setText(newName);
+                    userNameTextView.setText(newName);
+
+                    // Update SharedPreferences with the new name
+                    SharedPreferences sharedPreferences = getActivity().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("userName", newName);
+                    editor.apply();
                 } else {
                     Toast.makeText(getContext(), "Failed to update name", Toast.LENGTH_SHORT).show();
                 }
@@ -137,6 +147,38 @@ public class ProfileFragment extends Fragment {
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
+                Toast.makeText(getContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    // Fetch user details from API and store in SharedPreferences
+    private void fetchAndStoreUserDetails(TextView userNameTextView, TextView emailTextView) {
+        ApiService apiService = RetrofitClient.getClient("http://10.0.2.2:5163/api/").create(ApiService.class);
+        Call<UserResponse> call = apiService.getCurrentUser("Bearer " + token);
+        call.enqueue(new Callback<UserResponse>() {
+            @Override
+            public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    UserResponse user = response.body();
+
+                    // Store in SharedPreferences
+                    SharedPreferences sharedPreferences = getActivity().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("userName", user.getUsername());
+                    editor.putString("userEmail", user.getEmail());
+                    editor.apply();
+
+                    // Update the TextViews with the fetched data
+                    userNameTextView.setText(user.getUsername());
+                    emailTextView.setText(user.getEmail());
+                } else {
+                    Toast.makeText(getContext(), "Failed to fetch user details", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserResponse> call, Throwable t) {
                 Toast.makeText(getContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
