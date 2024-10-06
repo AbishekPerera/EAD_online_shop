@@ -61,18 +61,18 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         }
 
         // Set static product rating for now (this will be dynamic later)
-//        if (product.getVendor() != null && product.getVendor().getRatings() != null) {
-//            holder.productRating.setText(String.valueOf(product.getVendor().getRatings().getAverage()));
-//        } else {
-            holder.productRating.setText("4/5");
-//        }
+        if (product.getVendor() != null && product.getVendor().getRatings() != null) {
+            holder.productRating.setText(String.valueOf(product.getVendor().getRatings().getAverage()));
+        } else {
+            holder.productRating.setText("0/5");
+        }
 
         // Set onClickListener to open ViewItemActivity
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, ViewItemActivity.class);
             intent.putExtra("productId", product.getId());
             intent.putExtra("productName", product.getName());
-            intent.putExtra("productDescription", product.getDescriptionE());
+            intent.putExtra("productDescription", product.getDescription());
 
             if (product.getImages() != null && !product.getImages().isEmpty()) {
                 intent.putExtra("productImage", product.getImages().get(0)); // Send first image

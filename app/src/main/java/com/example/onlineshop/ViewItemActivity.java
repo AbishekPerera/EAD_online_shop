@@ -111,7 +111,7 @@ public class ViewItemActivity extends AppCompatActivity {
     // Update the UI with the product details
     private void updateUIWithProductDetails(ProductItem product) {
         productName.setText(product.getName());
-        productDescription.setText(product.getDescriptionE());
+        productDescription.setText(product.getDescription());
         productPrice.setText("Price: $" + product.getPrice());
         totalPrice.setText("Total: $" + product.getPrice() * quantity);
 
