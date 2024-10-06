@@ -140,10 +140,18 @@ public class ViewItemActivity extends AppCompatActivity {
     }
 
     // Display user comments in the review section
+    // Display user comments in the review section
     private void displayUserComments(List<ProductItem.Vendor.Comment> comments) {
-        reviewSectionViewProduct.removeAllViews();  // Clear previous reviews
+        // Clear previous reviews
+        reviewSectionViewProduct.removeAllViews();
+
+        // Get logged-in user's ID and username from SharedPreferences
+        SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+        String loggedUserId = sharedPreferences.getString("userId", ""); // Retrieve userId
+        String loggedUserName = sharedPreferences.getString("userName", "Anonymous"); // Retrieve userName
 
         LayoutInflater inflater = LayoutInflater.from(this);
+
         for (ProductItem.Vendor.Comment comment : comments) {
             // Inflate a new view for each comment
             View reviewView = inflater.inflate(R.layout.item_review, reviewSectionViewProduct, false);
@@ -152,15 +160,24 @@ public class ViewItemActivity extends AppCompatActivity {
             TextView commentDate = reviewView.findViewById(R.id.commentDate);
             TextView commenterName = reviewView.findViewById(R.id.commenterName);
 
-            // Set the comment, commenter's name (anonymous), and date
+            // Set the comment and date
             commentText.setText(comment.getComment());
             commentDate.setText(comment.getCreatedAt().toString());
-            commenterName.setText("Anonymous");
+
+            // Check if the comment was made by the logged-in user
+            if (comment.getCustomerId().equals(loggedUserId)) {
+                // Show "userName (by You)" if the logged-in user made the comment
+                commenterName.setText(loggedUserName + " (by You)");
+            } else {
+                // Show "Anonymous" if it's a comment from another user
+                commenterName.setText("Anonymous");
+            }
 
             // Add the review view to the review section
             reviewSectionViewProduct.addView(reviewView);
         }
     }
+
 
     // Update the total price when quantity changes
     private void updateTotalPrice() {
