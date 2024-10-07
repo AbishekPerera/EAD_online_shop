@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         regitserBtn = findViewById(R.id.registerTextBtn);
 
         // Initialize Retrofit
-        apiService = RetrofitClient.getClient("http://10.0.2.2:5163/api/").create(ApiService.class);
+        apiService = RetrofitClient.getClient().create(ApiService.class);
 
         // Or use your local machine IP if testing on a real device
         // apiService =

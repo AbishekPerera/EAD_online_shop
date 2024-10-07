@@ -37,7 +37,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         this.context = context;
         this.cartItemList = cartItemList;
         this.cartUpdateListener = cartUpdateListener;
-        apiService = RetrofitClient.getClient("http://10.0.2.2:5163/api/").create(ApiService.class); // Replace with your API base URL
+        apiService = RetrofitClient.getClient().create(ApiService.class); // Replace with your API base URL
     }
 
     @NonNull
@@ -70,9 +70,9 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
 
         // Handle Decrement Button
         holder.decreaseQuantity.setOnClickListener(v -> {
-//            if (cartItem.getProductQuantity() > 1) {
-                updateCartQuantity(cartItem.getProductId(), "decrease");
-//            }
+            // if (cartItem.getProductQuantity() > 1) {
+            updateCartQuantity(cartItem.getProductId(), "decrease");
+            // }
         });
     }
 
@@ -92,7 +92,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             public void onResponse(Call<CartResponse> call, Response<CartResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     CartResponse updatedCart = response.body();
-                    cartUpdateListener.onCartUpdated(updatedCart);  // Notify the fragment to update the UI
+                    cartUpdateListener.onCartUpdated(updatedCart); // Notify the fragment to update the UI
                 } else {
                     Toast.makeText(context, "Failed to update cart", Toast.LENGTH_SHORT).show();
                 }

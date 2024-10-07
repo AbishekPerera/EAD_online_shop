@@ -45,7 +45,7 @@ public class OrdersFragment extends Fragment {
         orderHistoryRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // Initialize API service
-        apiService = RetrofitClient.getClient("http://10.0.2.2:5163/api/").create(ApiService.class);
+        apiService = RetrofitClient.getClient().create(ApiService.class);
 
         // Fetch orders from API
         fetchUserOrders();
@@ -91,8 +91,7 @@ public class OrdersFragment extends Fragment {
                         itemResponse.getQuantity(),
                         itemResponse.getPrice(),
                         itemResponse.getImages(), // Pass images from the response
-                        itemResponse.getStatus()
-                );
+                        itemResponse.getStatus());
                 orderItems.add(orderItem);
             }
 
@@ -104,10 +103,10 @@ public class OrdersFragment extends Fragment {
                     orderResponse.getStatus(),
                     orderItems,
                     orderResponse.isCancelRequested(),
-                    orderResponse.getNote()
-            );
+                    orderResponse.getNote());
 
-            if (orderResponse.getStatus().equalsIgnoreCase("Processing") || orderResponse.getStatus().equalsIgnoreCase("Partially Delivered")) {
+            if (orderResponse.getStatus().equalsIgnoreCase("Processing")
+                    || orderResponse.getStatus().equalsIgnoreCase("Partially Delivered")) {
                 ongoingOrderList.add(order);
             } else {
                 orderHistoryList.add(order);

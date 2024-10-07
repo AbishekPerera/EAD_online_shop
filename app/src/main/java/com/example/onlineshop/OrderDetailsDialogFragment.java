@@ -37,7 +37,8 @@ public class OrderDetailsDialogFragment extends DialogFragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+            @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_order_details_dialog, container, false);
 
         // Initialize views
@@ -46,7 +47,7 @@ public class OrderDetailsDialogFragment extends DialogFragment {
         submitButton = view.findViewById(R.id.cartSubmitButton);
 
         // Initialize API service
-        apiService = RetrofitClient.getClient("http://10.0.2.2:5163/api/").create(ApiService.class);
+        apiService = RetrofitClient.getClient().create(ApiService.class);
 
         // Set submit button click listener
         submitButton.setOnClickListener(v -> {

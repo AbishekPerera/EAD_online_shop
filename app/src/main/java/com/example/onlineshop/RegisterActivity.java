@@ -45,7 +45,7 @@ public class RegisterActivity extends AppCompatActivity {
         registerButton = findViewById(R.id.registerButton);
 
         // Initialize Retrofit
-        apiService = RetrofitClient.getClient("http://10.0.2.2:5163/api/").create(ApiService.class);
+        apiService = RetrofitClient.getClient().create(ApiService.class);
 
         // Register button click listener
         registerButton.setOnClickListener(new View.OnClickListener() {
@@ -58,7 +58,8 @@ public class RegisterActivity extends AppCompatActivity {
                 String confirmPasswordText = registerConfirmPassword.getText().toString().trim();
 
                 // Validate input
-                if (!emailText.isEmpty() && !usernameText.isEmpty() && !passwordText.isEmpty() && passwordText.equals(confirmPasswordText)) {
+                if (!emailText.isEmpty() && !usernameText.isEmpty() && !passwordText.isEmpty()
+                        && passwordText.equals(confirmPasswordText)) {
                     // Call register method
                     registerUser(usernameText, emailText, passwordText);
                 } else {

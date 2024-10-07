@@ -36,8 +36,8 @@ public class HomeFragment extends Fragment implements CategoryAdapter.OnCategory
 
     private RecyclerView recyclerView;
     private ProductAdapter productAdapter;
-    private List<ProductItem> productList;  // Original product list
-    private List<ProductItem> filteredProductList;  // Filtered list for search results
+    private List<ProductItem> productList; // Original product list
+    private List<ProductItem> filteredProductList; // Filtered list for search results
 
     private RecyclerView categoryRecyclerView;
     private CategoryAdapter categoryAdapter;
@@ -48,11 +48,12 @@ public class HomeFragment extends Fragment implements CategoryAdapter.OnCategory
     private List<Integer> bannerImages;
 
     private ApiService apiService;
-    private androidx.appcompat.widget.SearchView searchView;  // SearchView for searching products
+    private androidx.appcompat.widget.SearchView searchView; // SearchView for searching products
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+            @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
         // Initialize banner carousel
@@ -73,12 +74,12 @@ public class HomeFragment extends Fragment implements CategoryAdapter.OnCategory
 
         // Initialize Categories RecyclerView
         categoryRecyclerView = view.findViewById(R.id.categoriesRecyclerView);
-        LinearLayoutManager categoryLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        LinearLayoutManager categoryLayoutManager = new LinearLayoutManager(getContext(),
+                LinearLayoutManager.HORIZONTAL, false);
         categoryRecyclerView.setLayoutManager(categoryLayoutManager);
 
         // Initialize API service
-        apiService = RetrofitClient.getClient("http://10.0.2.2:5163/api/").create(ApiService.class);
-
+        apiService = RetrofitClient.getClient().create(ApiService.class);
 
         // Check if user has a cart
         checkUserCart();
@@ -115,9 +116,9 @@ public class HomeFragment extends Fragment implements CategoryAdapter.OnCategory
                     if (response.code() == 404) {
                         // Cart does not exist, create a new cart
                         createUserCart();
-                    }
-                    else {
-                        Toast.makeText(getContext(), "Failed to check cart: " + response.message(), Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getContext(), "Failed to check cart: " + response.message(), Toast.LENGTH_SHORT)
+                                .show();
                     }
                 }
             }
@@ -201,7 +202,8 @@ public class HomeFragment extends Fragment implements CategoryAdapter.OnCategory
                 if (response.isSuccessful()) {
                     // Set the products in RecyclerView
                     productList = response.body();
-                    filteredProductList = new ArrayList<>(productList); // Initially, the filtered list is the same as the original list
+                    filteredProductList = new ArrayList<>(productList); // Initially, the filtered list is the same as
+                                                                        // the original list
                     productAdapter = new ProductAdapter(getContext(), filteredProductList);
                     recyclerView.setAdapter(productAdapter);
                 } else {

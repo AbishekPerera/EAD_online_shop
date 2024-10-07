@@ -109,7 +109,7 @@ public class ProfileFragment extends Fragment {
 
     // Method to update the user's name
     private void updateUserName(String newName, TextView userNameTextView) {
-        ApiService apiService = RetrofitClient.getClient("http://10.0.2.2:5163/api/").create(ApiService.class);
+        ApiService apiService = RetrofitClient.getClient().create(ApiService.class);
 
         HashMap<String, String> requestBody = new HashMap<>();
         requestBody.put("username", newName);
@@ -122,7 +122,8 @@ public class ProfileFragment extends Fragment {
                     Toast.makeText(getContext(), "Name updated successfully", Toast.LENGTH_SHORT).show();
                     userNameTextView.setText(newName);
 
-                    SharedPreferences sharedPreferences = getActivity().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+                    SharedPreferences sharedPreferences = getActivity().getSharedPreferences("MyAppPrefs",
+                            Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putString("userName", newName);
                     editor.apply();
@@ -140,7 +141,7 @@ public class ProfileFragment extends Fragment {
 
     // Method to fetch and store user details
     private void fetchAndStoreUserDetails(TextView userNameTextView, TextView emailTextView) {
-        ApiService apiService = RetrofitClient.getClient("http://10.0.2.2:5163/api/").create(ApiService.class);
+        ApiService apiService = RetrofitClient.getClient().create(ApiService.class);
         Call<UserResponse> call = apiService.getCurrentUser("Bearer " + token);
         call.enqueue(new Callback<UserResponse>() {
             @Override
@@ -148,7 +149,8 @@ public class ProfileFragment extends Fragment {
                 if (response.isSuccessful() && response.body() != null) {
                     UserResponse user = response.body();
 
-                    SharedPreferences sharedPreferences = getActivity().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+                    SharedPreferences sharedPreferences = getActivity().getSharedPreferences("MyAppPrefs",
+                            Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putString("userName", user.getUsername());
                     editor.putString("userEmail", user.getEmail());
@@ -174,14 +176,14 @@ public class ProfileFragment extends Fragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Deactivate Account")
                 .setMessage("Are you sure you want to deactivate your account? This action cannot be undone.")
-                .setPositiveButton("Yes", (dialog, which) -> deactivateAccount())  // Call the deactivate function
+                .setPositiveButton("Yes", (dialog, which) -> deactivateAccount()) // Call the deactivate function
                 .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
                 .show();
     }
 
     // Method to deactivate the user's account
     private void deactivateAccount() {
-        ApiService apiService = RetrofitClient.getClient("http://10.0.2.2:5163/api/").create(ApiService.class);
+        ApiService apiService = RetrofitClient.getClient().create(ApiService.class);
         Call<Void> call = apiService.deactivateAccount("Bearer " + token, userId);
         call.enqueue(new Callback<Void>() {
             @Override

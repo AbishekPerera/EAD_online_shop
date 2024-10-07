@@ -64,7 +64,7 @@ public class ViewItemActivity extends AppCompatActivity {
         reviewSectionViewProduct = findViewById(R.id.reviewSectionViewProduct);
 
         // Initialize API service
-        apiService = RetrofitClient.getClient("http://10.0.2.2:5163/api/").create(ApiService.class);
+        apiService = RetrofitClient.getClient().create(ApiService.class);
 
         // Get productId from intent
         String productId = getIntent().getStringExtra("productId");
@@ -324,7 +324,8 @@ public class ViewItemActivity extends AppCompatActivity {
         totalPrice.setText("Total: $" + total);
     }
 
-    // Add items to cart based on the selected quantity, handling sequential requests
+    // Add items to cart based on the selected quantity, handling sequential
+    // requests
     private void addItemToCart(int quantity, String productId) {
         SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
         String token = sharedPreferences.getString("token", "");

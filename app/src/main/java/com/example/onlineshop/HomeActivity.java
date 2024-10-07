@@ -50,7 +50,7 @@ public class HomeActivity extends AppCompatActivity {
 
         // Initialize API service and SharedPreferences
         sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
-        apiService = RetrofitClient.getClient("http://10.0.2.2:5163/api/").create(ApiService.class);
+        apiService = RetrofitClient.getClient().create(ApiService.class);
 
         // Fetch and store user details from API
         fetchUserDetails();

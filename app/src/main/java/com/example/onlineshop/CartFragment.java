@@ -48,7 +48,7 @@ public class CartFragment extends Fragment implements CartAdapter.CartUpdateList
         cartRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // Initialize API service
-        apiService = RetrofitClient.getClient("http://10.0.2.2:5163/api/").create(ApiService.class);
+        apiService = RetrofitClient.getClient().create(ApiService.class);
 
         // Fetch cart data from the API
         fetchCartData();
@@ -104,8 +104,7 @@ public class CartFragment extends Fragment implements CartAdapter.CartUpdateList
                     itemResponse.getPriceE(),
                     itemResponse.getQuantity(),
                     itemResponse.getInventoryCount(),
-                    itemResponse.getImages()
-            );
+                    itemResponse.getImages());
             cartItemList.add(cartItem);
         }
 
