@@ -1,6 +1,6 @@
 # 📱 E-Commerce Mobile Application  
 
-![Thumbnail](path/to/your/thumbnail.jpg)  
+![Thumbnail](https://github.com/AbishekPerera/EAD_online_shop/blob/master/Mobile%20UIs.png)  
 
 This repository contains the source code for the **E-Commerce Mobile Application**, developed as part of the Enterprise Application Development module in collaboration with **IFS Academy**. The app is designed for customers to explore products, manage orders, and engage with vendors seamlessly.  
 
