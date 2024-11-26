@@ -58,7 +58,7 @@ Follow these steps to set up and run the project locally:
 ### Steps to Run  
 1. Clone the repository:  
    ```bash
-   git clone https://github.com/your-username/E-Commerce-Mobile-App.git
+   git clone https://github.com/AbishekPerera/EAD_online_shop.git
    ```  
 2. Open the project in Android Studio.  
 3. Sync Gradle files.  
